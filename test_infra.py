@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import ValidationError
 
-# 1. Config con Pydantic
 class Settings(BaseSettings):
     postgres_user: str
     postgres_password: str
