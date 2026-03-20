@@ -12,3 +12,8 @@ class InventoryRead(BaseModel):
     item: ItemRead
 
     model_config = ConfigDict(from_attributes=True)
+
+class InventoryDrop(BaseModel):
+    player_id: UUID = Field(...)
+    item_id: int = Field(...)
+    quantity: int = Field(..., ge=1)

@@ -1,5 +1,7 @@
+from fastapi import HTTPException
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.schemas.player import PlayerCreate
+from app.schemas.player import PlayerCreate, PlayerGoldUpdate
 from app.models.base import Inventory, Player
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
@@ -40,3 +42,25 @@ async def get_player_by_id(db: AsyncSession, player_id: UUID):
     )
     
     return result.scalar_one_or_none()
+
+async def update_player_gold(db: AsyncSession, player_data: PlayerGoldUpdate):
+    result = await db.execute(
+        select(Player)
+        .where(Player.id == player_data.id)
+        .options(selectinload(Player.inventory_entries).selectinload(Inventory.item))
+    )
+    player = result.scalar_one_or_none()
+    if not player:
+        raise HTTPException(status_code=404, detail="El jugador no existe")
+    
+    updated_gold = player.gold + player_data.gold
+
+    if updated_gold < 0:
+        raise HTTPException(status_code=400, detail="Un jugador no puede tener oro negativo.")
+    
+    player.gold = updated_gold
+
+    await db.commit()
+    await db.refresh(player)
+    
+    return player

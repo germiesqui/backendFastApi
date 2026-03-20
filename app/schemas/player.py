@@ -13,3 +13,7 @@ class PlayerRead(BaseModel):
     inventory_entries: List["InventoryRead"] = []
 
     model_config = ConfigDict(from_attributes=True)
+
+class PlayerGoldUpdate(BaseModel):
+    id: UUID
+    gold: int
