@@ -3,9 +3,9 @@ from fastapi import FastAPI
 from app.api.players import player_router
 from app.api.items import item_router
 from app.api.inventories import inventory_router
+from app.core.redis import lifespan
 
-
-app = FastAPI(title="Aetheria API")
+app = FastAPI(title="Aetheria API", lifespan=lifespan)
 
 app.include_router(player_router, prefix="/players", tags=["Players"])
 app.include_router(item_router, prefix="/items", tags=["Items"])
