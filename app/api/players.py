@@ -25,7 +25,7 @@ async def read_all_players(db: AsyncSession = Depends(get_db)):
     return all_players
 
 @player_router.get("/id/{id}", response_model=PlayerRead)
-@cache_response(cache_player_by_id_key, ttl=600)
+@cache_response(cache_player_by_id_key, ttl=300)
 async def read_player_by_id(id: UUID, db: AsyncSession = Depends(get_db)):
     player = await get_player_by_id(db=db, player_id=id)
     if player == None:
@@ -33,7 +33,7 @@ async def read_player_by_id(id: UUID, db: AsyncSession = Depends(get_db)):
     return player
 
 @player_router.get("/name/{username}", response_model=PlayerRead)
-@cache_response(cache_player_by_username_key, ttl=600)
+@cache_response(cache_player_by_username_key, ttl=300)
 async def read_player_by_name(username: str, db: AsyncSession = Depends(get_db)):
     player = await get_player_by_name(db=db, player_username=username)
     if player == None:

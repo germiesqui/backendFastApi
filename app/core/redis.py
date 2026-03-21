@@ -73,3 +73,8 @@ def cache_player_by_id_key(player_id: UUID, **kwargs):
 
 def cache_player_by_username_key(username: str, **kwargs):
     return f"player:{username}"
+
+async def invalidate_player_cache(player_id: UUID, username: str = None):
+    await __delete_cache(f"player:id:{player_id}")
+    if username:
+        await __delete_cache(f"player:name:{username}")

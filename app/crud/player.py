@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.redis import invalidate_player_cache
 from app.schemas.player import PlayerCreate, PlayerGoldUpdate
 from app.models.base import Inventory, Player
 from sqlalchemy.future import select
@@ -62,5 +63,7 @@ async def update_player_gold(db: AsyncSession, player_data: PlayerGoldUpdate):
 
     await db.commit()
     await db.refresh(player)
+
+    await invalidate_player_cache(player.id, player.username)
     
     return player
