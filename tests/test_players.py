@@ -1,0 +1,1 @@
+async def test_create_player(client)
