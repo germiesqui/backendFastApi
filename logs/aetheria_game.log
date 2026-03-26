@@ -1,0 +1,5 @@
+2026-03-24 10:31:11,523 | INFO | app.core.redis | Cliente de Redis iniciado
+2026-03-24 10:31:26,075 | INFO | app.api.inventories | Entrada de inventario creada | Player: c5391e6f-d58c-45b3-af1d-d304d635ee48 | Item: 2 | Quantity: 1
+2026-03-24 10:31:26,075 | DEBUG | app.middleware.log_middleware | [POST] /inventory/add - Status: 200 - Time: 0.0650s
+2026-03-24 10:33:16,291 | DEBUG | app.middleware.log_middleware | [POST] /inventory/add - Status: 404 - Time: 0.0040s
+2026-03-24 20:58:09,231 | INFO | app.core.redis | Cliente de Redis detenido

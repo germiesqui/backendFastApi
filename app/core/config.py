@@ -1,6 +1,10 @@
+import logging
+
 from pydantic import ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
+logger = logging.getLogger(__name__)
 
 class Settings(BaseSettings):
     postgres_user: str
@@ -15,9 +19,11 @@ class Settings(BaseSettings):
 
     def get_db_url(self):
         return (f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@{self.postgres_server}:{self.postgres_port}/{self.postgres_db}")
-    
+
+
+
 try:
     settings = Settings()
 except ValidationError as e:
-    print(f"Error de validación en el .env: {e}")
+    logger.fatal(f"Error de validación en el .env: {e}")
     exit(1)

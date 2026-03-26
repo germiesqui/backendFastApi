@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 from fastapi import FastAPI
 from redis.asyncio import Redis
@@ -7,15 +8,19 @@ from fastapi.encoders import jsonable_encoder
 
 from app.core.config import settings
 
+logger = logging.getLogger(__name__)
+
 class RedisManager:
     def __init__(self):
         self.client: Redis | None = None
 
     async def init(self, host: str, port: int):
+        logger.info(f"Cliente de Redis iniciado")
         self.client = Redis(host=host, port=port, decode_responses=True)
 
     async def close(self):
         if self.client:
+            logger.info(f"Cliente de Redis detenido")
             await self.client.close()
 
 redis_manager = RedisManager()
@@ -31,7 +36,7 @@ def cache_response(key_func, ttl=300):
             try:
                 cached = await __get_cache(key)
             except Exception as e:
-                print(f"Error en Redis (get): {e}")
+                logger.error(f"Error en Redis (get): {e}")
             if cached:
                 return json.loads(cached)
             
@@ -40,7 +45,7 @@ def cache_response(key_func, ttl=300):
                 encoded_result = jsonable_encoder(result)
                 await __set_cache(key, json.dumps(encoded_result), ttl)
             except Exception as e:
-                print(f"Error en Redis (set): {e}")
+                logger.error(f"Error en Redis (set): {e}")
             return result
         return wrapper
     return decorator
@@ -53,16 +58,19 @@ async def lifespan(app: FastAPI):
 
 async def __get_cache(key: str):
     if not redis_manager.client:
+        logger.error(f"Redis no inicializado")
         raise RuntimeError("Redis no inicializado")
     return await redis_manager.client.get(key)
 
 async def __set_cache(key: str, value: str, ttl: int = 300):
     if not redis_manager.client:
+        logger.error(f"Redis no inicializado")
         raise RuntimeError("Redis no inicializado")
     await redis_manager.client.set(key, value, ex=ttl)
 
 async def __delete_cache(key: str):
     if not redis_manager.client:
+        logger.error(f"Redis no inicializado")
         raise RuntimeError("Redis no inicializado")
     await redis_manager.client.delete(key)
 
